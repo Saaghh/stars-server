@@ -1,0 +1,112 @@
+openapi: 3.0.3
+
+info:
+  title: Stars server
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8089/api
+
+tags:
+  - name: users
+    description: Everything related to user
+  - name: game
+    description: Everything about game
+
+paths:
+  /user:
+    post:
+      operationId: createUser
+      requestBody:
+        $ref: '#/components/requestBodies/CreateUserRequest'
+      tags:
+        - users
+      responses:
+        '200':
+          description: ok
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /games/{game_id}/tick:
+    put:
+      operationId: gameTick
+      tags:
+        - game
+      parameters:
+        - $ref: '#/components/parameters/GameID'
+        - $ref: '#/components/parameters/DateTime'
+      responses:
+        '200':
+          description: ok
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+
+components:
+  schemas:
+    userCreate:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: false
+        password:
+          type: string
+          nullable: false
+      required:
+        - username
+        - password
+
+    error:
+      type: object
+      properties:
+        code:
+          type: integer
+          nullable: false
+        description:
+          type: string
+          nullable: false
+      required:
+        - code
+        - description
+
+  requestBodies:
+    CreateUserRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/userCreate'
+
+  responses:
+    ErrorResponse:
+      description: error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+
+  parameters:
+    GameID:
+      name: game_id
+      in: path
+      required: true
+      description: Game ID
+      schema:
+        type: integer
+        nullable: false
+
+    DateTime:
+      name: date_time
+      in: query
+      required: true
+      description: Date-time parameter
+      schema:
+        type: string
+        format: duration
+        nullable: false
+        default: 5s

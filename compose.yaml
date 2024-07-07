@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  stars_postgres:
+    image: postgres:latest
+    container_name: stars_postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    command: ['postgres', '-c', 'log_statement=all']
+
+  stars_server:
+    build:
+      context: .
+      dockerfile: ./deployments/apiserver/Dockerfile
+    container_name: stars_server
+    depends_on:
+      - stars_postgres
+    ports:
+      - '8080:8080'
+    restart: always
