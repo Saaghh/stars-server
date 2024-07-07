@@ -3,19 +3,19 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/joho/godotenv"
 	migrate "github.com/rubenv/sql-migrate"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
 	"stars-server/app/config"
+	"stars-server/app/logger"
 	"stars-server/app/models"
 	"stars-server/app/processor"
 	"stars-server/app/server"
 	"stars-server/app/storage/postgres"
-	"syscall"
-
-	"stars-server/app/logger"
 )
 
 func main() {
@@ -63,7 +63,7 @@ func main() {
 	// running server
 	srv.RunServer()
 
-	//debug
+	// debug
 	_, err = proc.GetStellarBodies(ctx, models.StellarBodyFilter{})
 	if err != nil {
 		zap.L().With(zap.Error(err)).Error("main/proc.GetStellarBodies")

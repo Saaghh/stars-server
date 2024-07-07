@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"context"
-	"fmt"
+	"net/http"
+	"time"
+
 	"go.uber.org/zap"
 	"stars-server/app/generated/api-server"
-	"time"
 )
 
 type game interface {
@@ -13,9 +14,14 @@ type game interface {
 }
 
 func (h *Handlers) GameTick(ctx context.Context, params api.GameTickParams) (api.GameTickRes, error) {
-	res := fmt.Sprintf("%v", params.DateTime)
+	err := h.proc.GameTick(ctx, params.Duration)
+	if err != nil {
+		zap.L().With(zap.Error(err)).Error("GameTick/h.proc.GameTick")
+		return &api.GameTickInternalServerError{
+			Code:        http.StatusInternalServerError,
+			Description: "internal error",
+		}, nil
+	}
 
-	zap.L().Info(res)
-
-	return nil, nil
+	return &api.GameTickOK{}, nil
 }

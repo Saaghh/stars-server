@@ -61,50 +61,154 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 			switch elem[0] {
-			case 'g': // Prefix: "games/"
+			case 'g': // Prefix: "games"
 				origElem := elem
-				if l := len("games/"); len(elem) >= l && elem[0:l] == "games/" {
+				if l := len("games"); len(elem) >= l && elem[0:l] == "games" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				// Param: "game_id"
-				// Match until "/"
-				idx := strings.IndexByte(elem, '/')
-				if idx < 0 {
-					idx = len(elem)
-				}
-				args[0] = elem[:idx]
-				elem = elem[idx:]
-
 				if len(elem) == 0 {
-					break
+					switch r.Method {
+					case "GET":
+						s.handleGetGamesRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/tick"
+				case '/': // Prefix: "/"
 					origElem := elem
-					if l := len("/tick"); len(elem) >= l && elem[0:l] == "/tick" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "game_id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "PUT":
-							s.handleGameTickRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "PUT")
+						break
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						origElem := elem
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
 						}
 
-						return
+						if len(elem) == 0 {
+							break
+						}
+						switch elem[0] {
+						case 'b': // Prefix: "bodies"
+							origElem := elem
+							if l := len("bodies"); len(elem) >= l && elem[0:l] == "bodies" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleGetBodiesRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+
+							elem = origElem
+						case 's': // Prefix: "systems"
+							origElem := elem
+							if l := len("systems"); len(elem) >= l && elem[0:l] == "systems" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleGetSystemsRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+
+							elem = origElem
+						case 't': // Prefix: "tick"
+							origElem := elem
+							if l := len("tick"); len(elem) >= l && elem[0:l] == "tick" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "PUT":
+									s.handleGameTickRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "PUT")
+								}
+
+								return
+							}
+
+							elem = origElem
+						}
+
+						elem = origElem
 					}
 
 					elem = origElem
+				}
+
+				elem = origElem
+			case 't': // Prefix: "types"
+				origElem := elem
+				if l := len("types"); len(elem) >= l && elem[0:l] == "types" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleGetTypesRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
 				}
 
 				elem = origElem
@@ -224,52 +328,168 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				break
 			}
 			switch elem[0] {
-			case 'g': // Prefix: "games/"
+			case 'g': // Prefix: "games"
 				origElem := elem
-				if l := len("games/"); len(elem) >= l && elem[0:l] == "games/" {
+				if l := len("games"); len(elem) >= l && elem[0:l] == "games" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				// Param: "game_id"
-				// Match until "/"
-				idx := strings.IndexByte(elem, '/')
-				if idx < 0 {
-					idx = len(elem)
-				}
-				args[0] = elem[:idx]
-				elem = elem[idx:]
-
 				if len(elem) == 0 {
-					break
+					switch method {
+					case "GET":
+						r.name = "GetGames"
+						r.summary = ""
+						r.operationID = "getGames"
+						r.pathPattern = "/games"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/tick"
+				case '/': // Prefix: "/"
 					origElem := elem
-					if l := len("/tick"); len(elem) >= l && elem[0:l] == "/tick" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "game_id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "PUT":
-							r.name = "GameTick"
-							r.summary = ""
-							r.operationID = "gameTick"
-							r.pathPattern = "/games/{game_id}/tick"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
+						break
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						origElem := elem
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
 						}
+
+						if len(elem) == 0 {
+							break
+						}
+						switch elem[0] {
+						case 'b': // Prefix: "bodies"
+							origElem := elem
+							if l := len("bodies"); len(elem) >= l && elem[0:l] == "bodies" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "GET":
+									r.name = "GetBodies"
+									r.summary = ""
+									r.operationID = "getBodies"
+									r.pathPattern = "/games/{game_id}/bodies"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+							elem = origElem
+						case 's': // Prefix: "systems"
+							origElem := elem
+							if l := len("systems"); len(elem) >= l && elem[0:l] == "systems" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "GET":
+									r.name = "GetSystems"
+									r.summary = ""
+									r.operationID = "getSystems"
+									r.pathPattern = "/games/{game_id}/systems"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+							elem = origElem
+						case 't': // Prefix: "tick"
+							origElem := elem
+							if l := len("tick"); len(elem) >= l && elem[0:l] == "tick" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "PUT":
+									r.name = "GameTick"
+									r.summary = ""
+									r.operationID = "gameTick"
+									r.pathPattern = "/games/{game_id}/tick"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+							elem = origElem
+						}
+
+						elem = origElem
 					}
 
 					elem = origElem
+				}
+
+				elem = origElem
+			case 't': // Prefix: "types"
+				origElem := elem
+				if l := len("types"); len(elem) >= l && elem[0:l] == "types" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = "GetTypes"
+						r.summary = ""
+						r.operationID = "getTypes"
+						r.pathPattern = "/types"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
 				}
 
 				elem = origElem

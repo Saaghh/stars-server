@@ -3,6 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"stars-server/app/models"
 )
@@ -16,7 +18,7 @@ func (p *Postgres) TxGetStellarBodies(ctx context.Context, filter models.Stellar
 	query, args, err := psql.
 		Select("*").
 		From("stellar_bodies as sb").
-		//Join("stellar_bodies_types sbt ON sbt.id = sb.type").
+		// Join("stellar_bodies_types sbt ON sbt.id = sb.type").
 		ToSql()
 	if err != nil {
 		return nil, fmt.Errorf("psql.Select: %w", err)
@@ -78,4 +80,26 @@ func (p *Postgres) TxGetStellarBodyTypes(ctx context.Context) ([]models.StellarB
 	}
 
 	return types, nil
+}
+
+func (p *Postgres) TxUpdateStellarBodiesMovement(ctx context.Context, duration time.Duration, gameID int) error {
+	tx, err := p.getTXFromContext(ctx)
+	if err != nil {
+		return fmt.Errorf("p.getTXFromContext: %w", err)
+	}
+
+	k := duration.Hours() / 24
+
+	query := `
+	UPDATE stellar_bodies 
+	SET angle = MOD(angle + (angle_speed * $1), 360)
+	WHERE system_id IN 
+	      (SELECT id FROM systems WHERE game_id = $2)`
+
+	_, err = tx.Exec(ctx, query, k, gameID)
+	if err != nil {
+		return fmt.Errorf("tx.Exec: %w", err)
+	}
+
+	return nil
 }

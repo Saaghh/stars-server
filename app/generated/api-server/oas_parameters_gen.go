@@ -22,8 +22,8 @@ import (
 type GameTickParams struct {
 	// Game ID.
 	GameID int
-	// Date-time parameter.
-	DateTime time.Duration
+	// Duration parameter.
+	Duration time.Duration
 }
 
 func unpackGameTickParams(packed middleware.Parameters) (params GameTickParams) {
@@ -36,10 +36,10 @@ func unpackGameTickParams(packed middleware.Parameters) (params GameTickParams) 
 	}
 	{
 		key := middleware.ParameterKey{
-			Name: "date_time",
+			Name: "duration",
 			In:   "query",
 		}
-		params.DateTime = packed[key].(time.Duration)
+		params.Duration = packed[key].(time.Duration)
 	}
 	return params
 }
@@ -91,15 +91,15 @@ func decodeGameTickParams(args [1]string, argsEscaped bool, r *http.Request) (pa
 			Err:  err,
 		}
 	}
-	// Set default value for query: date_time.
+	// Set default value for query: duration.
 	{
 		val, _ := json.DecodeDuration(jx.DecodeStr("\"5s\""))
-		params.DateTime = val
+		params.Duration = val
 	}
-	// Decode query: date_time.
+	// Decode query: duration.
 	if err := func() error {
 		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "date_time",
+			Name:    "duration",
 			Style:   uri.QueryStyleForm,
 			Explode: true,
 		}
@@ -116,7 +116,7 @@ func decodeGameTickParams(args [1]string, argsEscaped bool, r *http.Request) (pa
 					return err
 				}
 
-				params.DateTime = c
+				params.Duration = c
 				return nil
 			}); err != nil {
 				return err
@@ -127,8 +127,140 @@ func decodeGameTickParams(args [1]string, argsEscaped bool, r *http.Request) (pa
 		return nil
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
-			Name: "date_time",
+			Name: "duration",
 			In:   "query",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// GetBodiesParams is parameters of getBodies operation.
+type GetBodiesParams struct {
+	// Game ID.
+	GameID int
+}
+
+func unpackGetBodiesParams(packed middleware.Parameters) (params GetBodiesParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "game_id",
+			In:   "path",
+		}
+		params.GameID = packed[key].(int)
+	}
+	return params
+}
+
+func decodeGetBodiesParams(args [1]string, argsEscaped bool, r *http.Request) (params GetBodiesParams, _ error) {
+	// Decode path: game_id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "game_id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.GameID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "game_id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// GetSystemsParams is parameters of getSystems operation.
+type GetSystemsParams struct {
+	// Game ID.
+	GameID int
+}
+
+func unpackGetSystemsParams(packed middleware.Parameters) (params GetSystemsParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "game_id",
+			In:   "path",
+		}
+		params.GameID = packed[key].(int)
+	}
+	return params
+}
+
+func decodeGetSystemsParams(args [1]string, argsEscaped bool, r *http.Request) (params GetSystemsParams, _ error) {
+	// Decode path: game_id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "game_id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.GameID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "game_id",
+			In:   "path",
 			Err:  err,
 		}
 	}

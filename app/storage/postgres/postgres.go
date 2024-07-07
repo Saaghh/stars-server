@@ -6,13 +6,14 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"net/url"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	migrate "github.com/rubenv/sql-migrate"
 	"go.uber.org/zap"
-	"net/url"
 	"stars-server/app/config"
 	"stars-server/app/models"
 )
