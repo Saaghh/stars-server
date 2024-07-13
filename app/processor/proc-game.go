@@ -13,6 +13,7 @@ type game interface {
 	TxGetSystems(ctx context.Context, filter models.StellarBodyFilter) ([]models.System, error)
 	TxGetStellarBodyTypes(ctx context.Context) ([]models.StellarBodyType, error)
 	TxUpdateStellarBodiesMovement(ctx context.Context, duration time.Duration, gameID int) error
+	TxGetGames(ctx context.Context) ([]models.DBGame, error)
 }
 
 func (p *Processor) GetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) ([]models.StellarBody, error) {
@@ -65,6 +66,26 @@ func (p *Processor) GetStellarBodyTypes(ctx context.Context) ([]models.StellarBo
 		result, err = p.db.TxGetStellarBodyTypes(ctx)
 		if err != nil {
 			return fmt.Errorf("p.db.TxGetStellarBodyTypes: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("p.db.WithTx: %w", err)
+	}
+
+	return result, nil
+}
+
+func (p *Processor) GetGames(ctx context.Context) ([]models.DBGame, error) {
+	var (
+		err    error
+		result []models.DBGame
+	)
+
+	if err = p.db.WithTx(ctx, func(ctx context.Context) error {
+		result, err = p.db.TxGetGames(ctx)
+		if err != nil {
+			return fmt.Errorf("p.db.TxGetGames: %w", err)
 		}
 
 		return nil

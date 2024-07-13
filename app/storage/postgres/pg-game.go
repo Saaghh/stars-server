@@ -103,3 +103,24 @@ func (p *Postgres) TxUpdateStellarBodiesMovement(ctx context.Context, duration t
 
 	return nil
 }
+
+func (p *Postgres) TxGetGames(ctx context.Context) ([]models.DBGame, error) {
+	tx, err := p.getTXFromContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("p.getTXFromContext: %w", err)
+	}
+
+	query, args, err := psql.Select("*").From("games").ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("pgxscan.Select: %w", err)
+	}
+
+	var games []models.DBGame
+
+	err = pgxscan.Select(ctx, tx, &games, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("pgxscan.Select: %w", err)
+	}
+
+	return games, nil
+}

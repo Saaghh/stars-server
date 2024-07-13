@@ -1137,7 +1137,7 @@ func (s *System) encodeFields(e *jx.Encoder) {
 	}
 	{
 		e.FieldStart("name")
-		e.Int(s.Name)
+		e.Str(s.Name)
 	}
 }
 
@@ -1183,8 +1183,8 @@ func (s *System) Decode(d *jx.Decoder) error {
 		case "name":
 			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				v, err := d.Int()
-				s.Name = int(v)
+				v, err := d.Str()
+				s.Name = string(v)
 				if err != nil {
 					return err
 				}

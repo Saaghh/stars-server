@@ -394,9 +394,9 @@ func (s *StellarBodyType) SetName(val string) {
 
 // Ref: #/components/schemas/system
 type System struct {
-	ID     int `json:"id"`
-	GameID int `json:"game_id"`
-	Name   int `json:"name"`
+	ID     int    `json:"id"`
+	GameID int    `json:"game_id"`
+	Name   string `json:"name"`
 }
 
 // GetID returns the value of ID.
@@ -410,7 +410,7 @@ func (s *System) GetGameID() int {
 }
 
 // GetName returns the value of Name.
-func (s *System) GetName() int {
+func (s *System) GetName() string {
 	return s.Name
 }
 
@@ -425,7 +425,7 @@ func (s *System) SetGameID(val int) {
 }
 
 // SetName sets the value of Name.
-func (s *System) SetName(val int) {
+func (s *System) SetName(val string) {
 	s.Name = val
 }
 

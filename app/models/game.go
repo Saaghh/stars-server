@@ -17,6 +17,15 @@ type Game struct {
 	Bodies    []StellarBody
 }
 
+type DBGame struct {
+	ID        int
+	OwnerID   int
+	WorldTime time.Time
+	Name      string
+	IsArchive bool
+	CreatedAt time.Time
+}
+
 type System struct {
 	ID     int
 	GameID int
