@@ -2,14 +2,15 @@ package server
 
 import (
 	"errors"
-	"github.com/go-chi/chi/v5/middleware"
-	"go.uber.org/zap"
 	"net/http"
-	"stars-server/app/config"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"go.uber.org/zap"
+	"stars-server/app/config"
 	"stars-server/app/generated/api-server"
 	"stars-server/app/handlers"
+	intMiddleware "stars-server/app/middleware"
 )
 
 type Server struct {
@@ -27,6 +28,7 @@ func NewServer(cfg config.Config, proc handlers.ProcessorInterface) (*Server, er
 	}
 
 	router.Use(middleware.Logger)
+	router.Use(intMiddleware.ContextEnricher)
 
 	router.Mount("/api/", http.StripPrefix("/api", server))
 

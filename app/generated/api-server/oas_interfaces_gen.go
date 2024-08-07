@@ -8,3 +8,19 @@ type CreateUserRes interface {
 type GameTickRes interface {
 	gameTickRes()
 }
+
+type GetBodiesRes interface {
+	getBodiesRes()
+}
+
+type GetGamesRes interface {
+	getGamesRes()
+}
+
+type GetSystemsRes interface {
+	getSystemsRes()
+}
+
+type GetTypesRes interface {
+	getTypesRes()
+}

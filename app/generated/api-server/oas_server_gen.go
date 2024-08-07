@@ -16,6 +16,22 @@ type Handler interface {
 	//
 	// PUT /games/{game_id}/tick
 	GameTick(ctx context.Context, params GameTickParams) (GameTickRes, error)
+	// GetBodies implements getBodies operation.
+	//
+	// GET /games/{game_id}/bodies
+	GetBodies(ctx context.Context, params GetBodiesParams) (GetBodiesRes, error)
+	// GetGames implements getGames operation.
+	//
+	// GET /games
+	GetGames(ctx context.Context) (GetGamesRes, error)
+	// GetSystems implements getSystems operation.
+	//
+	// GET /games/{game_id}/systems
+	GetSystems(ctx context.Context, params GetSystemsParams) (GetSystemsRes, error)
+	// GetTypes implements getTypes operation.
+	//
+	// GET /types
+	GetTypes(ctx context.Context) (GetTypesRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

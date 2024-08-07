@@ -2,6 +2,12 @@
 
 package api
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type CreateUserBadRequest Error
 
 func (*CreateUserBadRequest) createUserRes() {}
@@ -41,6 +47,59 @@ func (s *Error) SetDescription(val string) {
 	s.Description = val
 }
 
+func (*Error) getBodiesRes()  {}
+func (*Error) getGamesRes()   {}
+func (*Error) getSystemsRes() {}
+func (*Error) getTypesRes()   {}
+
+// Ref: #/components/schemas/game
+type Game struct {
+	ID        int       `json:"id"`
+	OwnerID   int       `json:"owner_id"`
+	WorldTime time.Time `json:"world_time"`
+	Name      string    `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *Game) GetID() int {
+	return s.ID
+}
+
+// GetOwnerID returns the value of OwnerID.
+func (s *Game) GetOwnerID() int {
+	return s.OwnerID
+}
+
+// GetWorldTime returns the value of WorldTime.
+func (s *Game) GetWorldTime() time.Time {
+	return s.WorldTime
+}
+
+// GetName returns the value of Name.
+func (s *Game) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *Game) SetID(val int) {
+	s.ID = val
+}
+
+// SetOwnerID sets the value of OwnerID.
+func (s *Game) SetOwnerID(val int) {
+	s.OwnerID = val
+}
+
+// SetWorldTime sets the value of WorldTime.
+func (s *Game) SetWorldTime(val time.Time) {
+	s.WorldTime = val
+}
+
+// SetName sets the value of Name.
+func (s *Game) SetName(val string) {
+	s.Name = val
+}
+
 type GameTickBadRequest Error
 
 func (*GameTickBadRequest) gameTickRes() {}
@@ -53,6 +112,322 @@ func (*GameTickInternalServerError) gameTickRes() {}
 type GameTickOK struct{}
 
 func (*GameTickOK) gameTickRes() {}
+
+type GetBodiesOKApplicationJSON []StellarBody
+
+func (*GetBodiesOKApplicationJSON) getBodiesRes() {}
+
+type GetGamesOKApplicationJSON []Game
+
+func (*GetGamesOKApplicationJSON) getGamesRes() {}
+
+type GetSystemsOKApplicationJSON []System
+
+func (*GetSystemsOKApplicationJSON) getSystemsRes() {}
+
+type GetTypesOKApplicationJSON []StellarBodyType
+
+func (*GetTypesOKApplicationJSON) getTypesRes() {}
+
+// NewNilFloat64 returns new NilFloat64 with value set to v.
+func NewNilFloat64(v float64) NilFloat64 {
+	return NilFloat64{
+		Value: v,
+	}
+}
+
+// NilFloat64 is nullable float64.
+type NilFloat64 struct {
+	Value float64
+	Null  bool
+}
+
+// SetTo sets value to v.
+func (o *NilFloat64) SetTo(v float64) {
+	o.Null = false
+	o.Value = v
+}
+
+// IsSet returns true if value is Null.
+func (o NilFloat64) IsNull() bool { return o.Null }
+
+// SetNull sets value to null.
+func (o *NilFloat64) SetToNull() {
+	o.Null = true
+	var v float64
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o NilFloat64) Get() (v float64, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o NilFloat64) Or(d float64) float64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewNilUUID returns new NilUUID with value set to v.
+func NewNilUUID(v uuid.UUID) NilUUID {
+	return NilUUID{
+		Value: v,
+	}
+}
+
+// NilUUID is nullable uuid.UUID.
+type NilUUID struct {
+	Value uuid.UUID
+	Null  bool
+}
+
+// SetTo sets value to v.
+func (o *NilUUID) SetTo(v uuid.UUID) {
+	o.Null = false
+	o.Value = v
+}
+
+// IsSet returns true if value is Null.
+func (o NilUUID) IsNull() bool { return o.Null }
+
+// SetNull sets value to null.
+func (o *NilUUID) SetToNull() {
+	o.Null = true
+	var v uuid.UUID
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o NilUUID) Get() (v uuid.UUID, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o NilUUID) Or(d uuid.UUID) uuid.UUID {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// Ref: #/components/schemas/stellar_body
+type StellarBody struct {
+	ID            uuid.UUID  `json:"id"`
+	SystemID      int        `json:"system_id"`
+	Name          string     `json:"name"`
+	TypeID        int        `json:"type_id"`
+	Mass          float64    `json:"mass"`
+	Diameter      float64    `json:"diameter"`
+	ParentBody    NilUUID    `json:"parent_body"`
+	OrbitalRadius NilFloat64 `json:"orbital_radius"`
+	Angle         NilFloat64 `json:"angle"`
+	AngleSpeed    NilFloat64 `json:"angle_speed"`
+	LinearSpeed   NilFloat64 `json:"linear_speed"`
+	CoordinateX   NilFloat64 `json:"coordinate_x"`
+	CoordinateY   NilFloat64 `json:"coordinate_y"`
+}
+
+// GetID returns the value of ID.
+func (s *StellarBody) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetSystemID returns the value of SystemID.
+func (s *StellarBody) GetSystemID() int {
+	return s.SystemID
+}
+
+// GetName returns the value of Name.
+func (s *StellarBody) GetName() string {
+	return s.Name
+}
+
+// GetTypeID returns the value of TypeID.
+func (s *StellarBody) GetTypeID() int {
+	return s.TypeID
+}
+
+// GetMass returns the value of Mass.
+func (s *StellarBody) GetMass() float64 {
+	return s.Mass
+}
+
+// GetDiameter returns the value of Diameter.
+func (s *StellarBody) GetDiameter() float64 {
+	return s.Diameter
+}
+
+// GetParentBody returns the value of ParentBody.
+func (s *StellarBody) GetParentBody() NilUUID {
+	return s.ParentBody
+}
+
+// GetOrbitalRadius returns the value of OrbitalRadius.
+func (s *StellarBody) GetOrbitalRadius() NilFloat64 {
+	return s.OrbitalRadius
+}
+
+// GetAngle returns the value of Angle.
+func (s *StellarBody) GetAngle() NilFloat64 {
+	return s.Angle
+}
+
+// GetAngleSpeed returns the value of AngleSpeed.
+func (s *StellarBody) GetAngleSpeed() NilFloat64 {
+	return s.AngleSpeed
+}
+
+// GetLinearSpeed returns the value of LinearSpeed.
+func (s *StellarBody) GetLinearSpeed() NilFloat64 {
+	return s.LinearSpeed
+}
+
+// GetCoordinateX returns the value of CoordinateX.
+func (s *StellarBody) GetCoordinateX() NilFloat64 {
+	return s.CoordinateX
+}
+
+// GetCoordinateY returns the value of CoordinateY.
+func (s *StellarBody) GetCoordinateY() NilFloat64 {
+	return s.CoordinateY
+}
+
+// SetID sets the value of ID.
+func (s *StellarBody) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetSystemID sets the value of SystemID.
+func (s *StellarBody) SetSystemID(val int) {
+	s.SystemID = val
+}
+
+// SetName sets the value of Name.
+func (s *StellarBody) SetName(val string) {
+	s.Name = val
+}
+
+// SetTypeID sets the value of TypeID.
+func (s *StellarBody) SetTypeID(val int) {
+	s.TypeID = val
+}
+
+// SetMass sets the value of Mass.
+func (s *StellarBody) SetMass(val float64) {
+	s.Mass = val
+}
+
+// SetDiameter sets the value of Diameter.
+func (s *StellarBody) SetDiameter(val float64) {
+	s.Diameter = val
+}
+
+// SetParentBody sets the value of ParentBody.
+func (s *StellarBody) SetParentBody(val NilUUID) {
+	s.ParentBody = val
+}
+
+// SetOrbitalRadius sets the value of OrbitalRadius.
+func (s *StellarBody) SetOrbitalRadius(val NilFloat64) {
+	s.OrbitalRadius = val
+}
+
+// SetAngle sets the value of Angle.
+func (s *StellarBody) SetAngle(val NilFloat64) {
+	s.Angle = val
+}
+
+// SetAngleSpeed sets the value of AngleSpeed.
+func (s *StellarBody) SetAngleSpeed(val NilFloat64) {
+	s.AngleSpeed = val
+}
+
+// SetLinearSpeed sets the value of LinearSpeed.
+func (s *StellarBody) SetLinearSpeed(val NilFloat64) {
+	s.LinearSpeed = val
+}
+
+// SetCoordinateX sets the value of CoordinateX.
+func (s *StellarBody) SetCoordinateX(val NilFloat64) {
+	s.CoordinateX = val
+}
+
+// SetCoordinateY sets the value of CoordinateY.
+func (s *StellarBody) SetCoordinateY(val NilFloat64) {
+	s.CoordinateY = val
+}
+
+// Ref: #/components/schemas/stellar_body_type
+type StellarBodyType struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *StellarBodyType) GetID() int {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *StellarBodyType) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *StellarBodyType) SetID(val int) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *StellarBodyType) SetName(val string) {
+	s.Name = val
+}
+
+// Ref: #/components/schemas/system
+type System struct {
+	ID     int    `json:"id"`
+	GameID int    `json:"game_id"`
+	Name   string `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *System) GetID() int {
+	return s.ID
+}
+
+// GetGameID returns the value of GameID.
+func (s *System) GetGameID() int {
+	return s.GameID
+}
+
+// GetName returns the value of Name.
+func (s *System) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *System) SetID(val int) {
+	s.ID = val
+}
+
+// SetGameID sets the value of GameID.
+func (s *System) SetGameID(val int) {
+	s.GameID = val
+}
+
+// SetName sets the value of Name.
+func (s *System) SetName(val string) {
+	s.Name = val
+}
 
 // Ref: #/components/schemas/userCreate
 type UserCreate struct {

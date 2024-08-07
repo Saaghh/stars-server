@@ -1,7 +1,7 @@
 -- +migrate Up
 CREATE TABLE games(
     id serial primary key,
-    owner int references users(id) not null,
+    owner_id int references users(id) not null,
     world_time timestamp not null,
     name varchar not null,
     is_archive boolean not null default true,

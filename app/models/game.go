@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Game struct {
@@ -14,6 +15,15 @@ type Game struct {
 	CreatedAt time.Time
 	Systems   []System
 	Bodies    []StellarBody
+}
+
+type DBGame struct {
+	ID        int
+	OwnerID   int
+	WorldTime time.Time
+	Name      string
+	IsArchive bool
+	CreatedAt time.Time
 }
 
 type System struct {
