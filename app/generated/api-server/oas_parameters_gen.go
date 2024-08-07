@@ -139,6 +139,8 @@ func decodeGameTickParams(args [1]string, argsEscaped bool, r *http.Request) (pa
 type GetBodiesParams struct {
 	// Game ID.
 	GameID int
+	// Filter by system id.
+	SystemIds []int
 }
 
 func unpackGetBodiesParams(packed middleware.Parameters) (params GetBodiesParams) {
@@ -149,10 +151,20 @@ func unpackGetBodiesParams(packed middleware.Parameters) (params GetBodiesParams
 		}
 		params.GameID = packed[key].(int)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "system_ids",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.SystemIds = v.([]int)
+		}
+	}
 	return params
 }
 
 func decodeGetBodiesParams(args [1]string, argsEscaped bool, r *http.Request) (params GetBodiesParams, _ error) {
+	q := uri.NewQueryDecoder(r.URL.Query())
 	// Decode path: game_id.
 	if err := func() error {
 		param := args[0]
@@ -195,6 +207,49 @@ func decodeGetBodiesParams(args [1]string, argsEscaped bool, r *http.Request) (p
 		return params, &ogenerrors.DecodeParamError{
 			Name: "game_id",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode query: system_ids.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "system_ids",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				return d.DecodeArray(func(d uri.Decoder) error {
+					var paramsDotSystemIdsVal int
+					if err := func() error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToInt(val)
+						if err != nil {
+							return err
+						}
+
+						paramsDotSystemIdsVal = c
+						return nil
+					}(); err != nil {
+						return err
+					}
+					params.SystemIds = append(params.SystemIds, paramsDotSystemIdsVal)
+					return nil
+				})
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "system_ids",
+			In:   "query",
 			Err:  err,
 		}
 	}

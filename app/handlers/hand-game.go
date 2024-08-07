@@ -104,7 +104,8 @@ func (h *Handlers) GetTypes(ctx context.Context) (api.GetTypesRes, error) {
 
 func (h *Handlers) GetBodies(ctx context.Context, params api.GetBodiesParams) (api.GetBodiesRes, error) {
 	filter := models.StellarBodyFilter{
-		Game: params.GameID,
+		Game:    params.GameID,
+		Systems: params.SystemIds,
 	}
 
 	bodies, err := h.proc.GetStellarBodies(ctx, filter)

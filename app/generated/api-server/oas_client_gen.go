@@ -344,6 +344,36 @@ func (c *Client) sendGetBodies(ctx context.Context, params GetBodiesParams) (res
 	pathParts[2] = "/bodies"
 	uri.AddPathParts(u, pathParts[:]...)
 
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "system_ids" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "system_ids",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if params.SystemIds != nil {
+				return e.EncodeArray(func(e uri.Encoder) error {
+					for i, item := range params.SystemIds {
+						if err := func() error {
+							return e.EncodeValue(conv.IntToString(item))
+						}(); err != nil {
+							return errors.Wrapf(err, "[%d]", i)
+						}
+					}
+					return nil
+				})
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
 	stage = "EncodeRequest"
 	r, err := ht.NewRequest(ctx, "GET", u)
 	if err != nil {

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"github.com/Masterminds/squirrel"
 	"time"
 
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -15,9 +16,15 @@ func (p *Postgres) TxGetStellarBodies(ctx context.Context, filter models.Stellar
 		return nil, fmt.Errorf("p.getTXFromContext: %w", err)
 	}
 
-	query, args, err := psql.
+	builder := psql.
 		Select("*").
-		From("stellar_bodies as sb").
+		From("stellar_bodies as sb")
+
+	if filter.Systems != nil {
+		builder = builder.Where(squirrel.Eq{"system_id": filter.Systems})
+	}
+
+	query, args, err := builder.
 		// Join("stellar_bodies_types sbt ON sbt.id = sb.type").
 		ToSql()
 	if err != nil {

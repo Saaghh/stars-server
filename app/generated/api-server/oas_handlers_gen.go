@@ -314,6 +314,10 @@ func (s *Server) handleGetBodiesRequest(args [1]string, argsEscaped bool, w http
 					Name: "game_id",
 					In:   "path",
 				}: params.GameID,
+				{
+					Name: "system_ids",
+					In:   "query",
+				}: params.SystemIds,
 			},
 			Raw: r,
 		}
