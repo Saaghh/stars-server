@@ -44,7 +44,7 @@ func (s GetGamesOKApplicationJSON) Validate() error {
 }
 
 func (s GetSystemsOKApplicationJSON) Validate() error {
-	alias := ([]System)(s)
+	alias := ([]StarSystem)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}
@@ -55,6 +55,29 @@ func (s GetTypesOKApplicationJSON) Validate() error {
 	alias := ([]StellarBodyType)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
+func (s *ResourceType) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := (validate.Float{}).Validate(float64(s.Density)); err != nil {
+			return errors.Wrap(err, "float")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "density",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 	return nil
 }
@@ -192,6 +215,68 @@ func (s *StellarBody) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "coordinate_y",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if s.Stockpiles == nil {
+			return errors.New("nil is invalid value")
+		}
+		var failures []validate.FieldError
+		for i, elem := range s.Stockpiles {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "stockpiles",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *Stockpile) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := (validate.Float{}).Validate(float64(s.Quantity)); err != nil {
+			return errors.Wrap(err, "float")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "quantity",
 			Error: err,
 		})
 	}

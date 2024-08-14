@@ -3,18 +3,20 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"stars-server/app/models"
 	"time"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
+
 	"stars-server/app/generated/api-server"
+	"stars-server/app/models"
 )
 
 type game interface {
 	GetGames(ctx context.Context) ([]models.DBGame, error)
 	GetSystems(context.Context, models.StellarBodyFilter) ([]models.System, error)
 	GetStellarBodyTypes(context.Context) ([]models.StellarBodyType, error)
-	GetStellarBodies(context.Context, models.StellarBodyFilter) ([]models.StellarBody, error)
+	GetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) (map[uuid.UUID]*models.StellarBody, error)
 
 	GameTick(ctx context.Context, duration time.Duration) error
 }
@@ -71,7 +73,7 @@ func (h *Handlers) GetSystems(ctx context.Context, params api.GetSystemsParams) 
 
 	result := make(api.GetSystemsOKApplicationJSON, 0, len(systems))
 	for _, system := range systems {
-		result = append(result, api.System{
+		result = append(result, api.StarSystem{
 			ID:     system.ID,
 			GameID: system.GameID,
 			Name:   system.Name,
@@ -119,7 +121,7 @@ func (h *Handlers) GetBodies(ctx context.Context, params api.GetBodiesParams) (a
 
 	result := make(api.GetBodiesOKApplicationJSON, 0, len(bodies))
 	for _, body := range bodies {
-		result = append(result, stellarBodyToAPI(body))
+		result = append(result, stellarBodyToAPI(*body))
 	}
 
 	return &result, nil
@@ -156,33 +158,47 @@ func stellarBodyToAPI(body models.StellarBody) api.StellarBody {
 		},
 	}
 
+	for _, stockpile := range body.Stockpiles {
+		apiBody.Stockpiles = append(apiBody.Stockpiles, stockpileToAPI(stockpile))
+	}
+
 	if !apiBody.ParentBody.Null {
 		apiBody.ParentBody.Value = *body.ParentBodyID
 	}
-
 	if !apiBody.OrbitalRadius.Null {
 		apiBody.OrbitalRadius.Value = *body.OrbitalRadius
 	}
-
 	if !apiBody.Angle.Null {
 		apiBody.Angle.Value = *body.Angle
 	}
-
 	if !apiBody.AngleSpeed.Null {
 		apiBody.AngleSpeed.Value = *body.AngleSpeed
 	}
-
 	if !apiBody.LinearSpeed.Null {
 		apiBody.LinearSpeed.Value = *body.LinearSpeed
 	}
-
 	if !apiBody.CoordinateX.Null {
 		apiBody.CoordinateX.Value = *body.CoordinateX
 	}
-
 	if !apiBody.CoordinateY.Null {
 		apiBody.CoordinateY.Value = *body.CoordinateY
 	}
 
 	return apiBody
+}
+
+func stockpileToAPI(s models.Stockpile) api.Stockpile {
+	return api.Stockpile{
+		Type:     resourceTypeToAPI(s.ResourceType),
+		ID:       s.ID,
+		Quantity: s.Quantity,
+	}
+}
+
+func resourceTypeToAPI(r models.ResourceType) api.ResourceType {
+	return api.ResourceType{
+		ID:      r.ID,
+		Name:    r.Name,
+		Density: r.Density,
+	}
 }
