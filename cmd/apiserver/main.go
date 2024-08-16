@@ -12,7 +12,6 @@ import (
 	"go.uber.org/zap"
 	"stars-server/app/config"
 	"stars-server/app/logger"
-	"stars-server/app/models"
 	"stars-server/app/processor"
 	"stars-server/app/server"
 	"stars-server/app/storage/postgres"
@@ -62,22 +61,6 @@ func main() {
 
 	// running server
 	srv.RunServer()
-
-	// debug
-	_, err = proc.GetStellarBodies(ctx, models.StellarBodyFilter{})
-	if err != nil {
-		zap.L().With(zap.Error(err)).Error("main/proc.GetStellarBodies")
-	}
-
-	_, err = proc.GetSystems(ctx, models.StellarBodyFilter{})
-	if err != nil {
-		zap.L().With(zap.Error(err)).Error("main/proc.GetSystems")
-	}
-
-	_, err = proc.GetStellarBodyTypes(ctx)
-	if err != nil {
-		zap.L().With(zap.Error(err)).Error("main/proc.GetStellarBodyTypes")
-	}
 
 	// shutdown
 	quit := make(chan os.Signal, 1)

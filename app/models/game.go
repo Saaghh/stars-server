@@ -51,6 +51,7 @@ type StellarBody struct {
 	LinearSpeed   *float64
 	CoordinateX   *float64
 	CoordinateY   *float64
+	Stockpiles    []Stockpile
 }
 
 type StellarBodyFilter struct {
@@ -58,4 +59,16 @@ type StellarBodyFilter struct {
 	Game            int
 	NameSearch      string
 	StellarBodyType int
+}
+
+type ResourceType struct {
+	ID      int
+	Density float64
+	Name    string
+}
+
+type Stockpile struct {
+	ID           int
+	Quantity     float64
+	ResourceType ResourceType
 }

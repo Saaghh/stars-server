@@ -8,13 +8,6 @@ CREATE TABLE games(
     created_at timestamp with time zone not null default now()
 );
 
-CREATE TABLE civilizations(
-    id serial primary key,
-    game int references games(id) not null,
-    owner int references users(id) not null,
-    name varchar not null
-);
-
 CREATE TABLE systems(
     id serial primary key,
     game_id int references games(id) not null,
@@ -33,33 +26,20 @@ CREATE TABLE stellar_bodies(
     -- body properties
     name varchar not null,
     type_id int references stellar_bodies_types not null,
-    mass numeric not null,
-    diameter numeric not null,
+    mass numeric not null, -- in earths
+    diameter numeric not null, -- in earths
 
     -- orbital params
     parent_body_id uuid references stellar_bodies(id),
-    orbital_radius numeric,
-    angle numeric,
-    angle_speed numeric,
+    orbital_radius numeric, -- in au
+    angle numeric, -- in degree
+    angle_speed numeric, -- in degree/day
 
     -- linear params
     linear_speed numeric,
-    coordinate_x numeric,
-    coordinate_y numeric
-);
-
-CREATE TABLE colonies(
-    id uuid primary key,
-    stellar_body uuid references stellar_bodies(id) not null,
-    name varchar not null,
-    civilization int references civilizations(id) not null
-);
-
-CREATE TABLE system_connections(
-    id uuid primary key,
-    systems_from int references systems(id) not null,
-    systems_to int references systems(id) not null
+    coordinate_x numeric, -- in au
+    coordinate_y numeric -- in au
 );
 
 -- +migrate Down
-DROP TABLE system_connections, colonies, stellar_bodies, stellar_bodies_types, systems, civilizations, games;
+DROP TABLE stellar_bodies, stellar_bodies_types, systems, games;

@@ -5,27 +5,45 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+
 	"stars-server/app/models"
 )
 
 type game interface {
-	TxGetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) ([]models.StellarBody, error)
+	TxGetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) (map[uuid.UUID]*models.StellarBody, error)
+	TxGetStellarBodiesStockpiles(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID][]models.Stockpile, error)
 	TxGetSystems(ctx context.Context, filter models.StellarBodyFilter) ([]models.System, error)
 	TxGetStellarBodyTypes(ctx context.Context) ([]models.StellarBodyType, error)
-	TxUpdateStellarBodiesMovement(ctx context.Context, duration time.Duration, gameID int) error
 	TxGetGames(ctx context.Context) ([]models.DBGame, error)
+
+	TxUpdateStellarBodiesMovement(ctx context.Context, duration time.Duration, gameID int) error
+	TxUpdateWorldTime(ctx context.Context, duration time.Duration, gameID int) error
 }
 
-func (p *Processor) GetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) ([]models.StellarBody, error) {
+func (p *Processor) GetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) (map[uuid.UUID]*models.StellarBody, error) {
 	var (
-		result []models.StellarBody
-		err    error
+		err           error
+		stellarBodies map[uuid.UUID]*models.StellarBody
+		stockpiles    map[uuid.UUID][]models.Stockpile
 	)
 
 	if err = p.db.WithTx(ctx, func(ctx context.Context) error {
-		result, err = p.db.TxGetStellarBodies(ctx, filter)
-		if err != nil {
-			return fmt.Errorf("p.GetStellarBodies: %w", err)
+		if stellarBodies, err = p.db.TxGetStellarBodies(ctx, filter); err != nil {
+			return fmt.Errorf("p.db.GetStellarBodies: %w", err)
+		}
+
+		ids := make([]uuid.UUID, 0, len(stellarBodies))
+		for _, sb := range stellarBodies {
+			ids = append(ids, sb.ID)
+		}
+
+		if stockpiles, err = p.db.TxGetStellarBodiesStockpiles(ctx, ids); err != nil {
+			return fmt.Errorf("p.db.TxGetStellarBodiesStockpiles: %w", err)
+		}
+
+		for key, sp := range stockpiles {
+			stellarBodies[key].Stockpiles = sp
 		}
 
 		return nil
@@ -33,7 +51,7 @@ func (p *Processor) GetStellarBodies(ctx context.Context, filter models.StellarB
 		return nil, fmt.Errorf("p.db.WithTx: %w", err)
 	}
 
-	return result, nil
+	return stellarBodies, nil
 }
 
 func (p *Processor) GetSystems(ctx context.Context, filter models.StellarBodyFilter) ([]models.System, error) {
@@ -108,14 +126,16 @@ func (p *Processor) GameTick(ctx context.Context, duration time.Duration) error 
 		// получить список событий
 		// выполнять по порядку. До завершения или события со стопом
 		// подвигать stellar bodies
-
-		// TODO: add filter for game
 		if err = p.db.TxUpdateStellarBodiesMovement(ctx, duration, gameID); err != nil {
 			return fmt.Errorf(
 				"p.db.TxUpdateStellarBodiesMovement(duration: %v, gameID: %d): %w", duration, gameID, err)
 		}
 
 		// подвигать экономику
+		// обновить время мира
+		if err = p.db.TxUpdateWorldTime(ctx, duration, gameID); err != nil {
+			return fmt.Errorf("p.db.TxUpdateWorldTime: %w", err)
+		}
 		// закончить
 
 		return nil

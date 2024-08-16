@@ -121,7 +121,7 @@ type GetGamesOKApplicationJSON []Game
 
 func (*GetGamesOKApplicationJSON) getGamesRes() {}
 
-type GetSystemsOKApplicationJSON []System
+type GetSystemsOKApplicationJSON []StarSystem
 
 func (*GetSystemsOKApplicationJSON) getSystemsRes() {}
 
@@ -219,21 +219,96 @@ func (o NilUUID) Or(d uuid.UUID) uuid.UUID {
 	return d
 }
 
-// Ref: #/components/schemas/stellar_body
+// Ref: #/components/schemas/resourceType
+type ResourceType struct {
+	ID      int     `json:"id"`
+	Name    string  `json:"name"`
+	Density float64 `json:"density"`
+}
+
+// GetID returns the value of ID.
+func (s *ResourceType) GetID() int {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *ResourceType) GetName() string {
+	return s.Name
+}
+
+// GetDensity returns the value of Density.
+func (s *ResourceType) GetDensity() float64 {
+	return s.Density
+}
+
+// SetID sets the value of ID.
+func (s *ResourceType) SetID(val int) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *ResourceType) SetName(val string) {
+	s.Name = val
+}
+
+// SetDensity sets the value of Density.
+func (s *ResourceType) SetDensity(val float64) {
+	s.Density = val
+}
+
+// Ref: #/components/schemas/starSystem
+type StarSystem struct {
+	ID     int    `json:"id"`
+	GameID int    `json:"game_id"`
+	Name   string `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *StarSystem) GetID() int {
+	return s.ID
+}
+
+// GetGameID returns the value of GameID.
+func (s *StarSystem) GetGameID() int {
+	return s.GameID
+}
+
+// GetName returns the value of Name.
+func (s *StarSystem) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *StarSystem) SetID(val int) {
+	s.ID = val
+}
+
+// SetGameID sets the value of GameID.
+func (s *StarSystem) SetGameID(val int) {
+	s.GameID = val
+}
+
+// SetName sets the value of Name.
+func (s *StarSystem) SetName(val string) {
+	s.Name = val
+}
+
+// Ref: #/components/schemas/stellarBody
 type StellarBody struct {
-	ID            uuid.UUID  `json:"id"`
-	SystemID      int        `json:"system_id"`
-	Name          string     `json:"name"`
-	TypeID        int        `json:"type_id"`
-	Mass          float64    `json:"mass"`
-	Diameter      float64    `json:"diameter"`
-	ParentBody    NilUUID    `json:"parent_body"`
-	OrbitalRadius NilFloat64 `json:"orbital_radius"`
-	Angle         NilFloat64 `json:"angle"`
-	AngleSpeed    NilFloat64 `json:"angle_speed"`
-	LinearSpeed   NilFloat64 `json:"linear_speed"`
-	CoordinateX   NilFloat64 `json:"coordinate_x"`
-	CoordinateY   NilFloat64 `json:"coordinate_y"`
+	ID            uuid.UUID   `json:"id"`
+	SystemID      int         `json:"system_id"`
+	Name          string      `json:"name"`
+	TypeID        int         `json:"type_id"`
+	Mass          float64     `json:"mass"`
+	Diameter      float64     `json:"diameter"`
+	ParentBody    NilUUID     `json:"parent_body"`
+	OrbitalRadius NilFloat64  `json:"orbital_radius"`
+	Angle         NilFloat64  `json:"angle"`
+	AngleSpeed    NilFloat64  `json:"angle_speed"`
+	LinearSpeed   NilFloat64  `json:"linear_speed"`
+	CoordinateX   NilFloat64  `json:"coordinate_x"`
+	CoordinateY   NilFloat64  `json:"coordinate_y"`
+	Stockpiles    []Stockpile `json:"stockpiles"`
 }
 
 // GetID returns the value of ID.
@@ -301,6 +376,11 @@ func (s *StellarBody) GetCoordinateY() NilFloat64 {
 	return s.CoordinateY
 }
 
+// GetStockpiles returns the value of Stockpiles.
+func (s *StellarBody) GetStockpiles() []Stockpile {
+	return s.Stockpiles
+}
+
 // SetID sets the value of ID.
 func (s *StellarBody) SetID(val uuid.UUID) {
 	s.ID = val
@@ -366,7 +446,12 @@ func (s *StellarBody) SetCoordinateY(val NilFloat64) {
 	s.CoordinateY = val
 }
 
-// Ref: #/components/schemas/stellar_body_type
+// SetStockpiles sets the value of Stockpiles.
+func (s *StellarBody) SetStockpiles(val []Stockpile) {
+	s.Stockpiles = val
+}
+
+// Ref: #/components/schemas/stellarBodyType
 type StellarBodyType struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -392,41 +477,41 @@ func (s *StellarBodyType) SetName(val string) {
 	s.Name = val
 }
 
-// Ref: #/components/schemas/system
-type System struct {
-	ID     int    `json:"id"`
-	GameID int    `json:"game_id"`
-	Name   string `json:"name"`
+// Ref: #/components/schemas/stockpile
+type Stockpile struct {
+	Type     ResourceType `json:"type"`
+	ID       int          `json:"id"`
+	Quantity float64      `json:"quantity"`
+}
+
+// GetType returns the value of Type.
+func (s *Stockpile) GetType() ResourceType {
+	return s.Type
 }
 
 // GetID returns the value of ID.
-func (s *System) GetID() int {
+func (s *Stockpile) GetID() int {
 	return s.ID
 }
 
-// GetGameID returns the value of GameID.
-func (s *System) GetGameID() int {
-	return s.GameID
+// GetQuantity returns the value of Quantity.
+func (s *Stockpile) GetQuantity() float64 {
+	return s.Quantity
 }
 
-// GetName returns the value of Name.
-func (s *System) GetName() string {
-	return s.Name
+// SetType sets the value of Type.
+func (s *Stockpile) SetType(val ResourceType) {
+	s.Type = val
 }
 
 // SetID sets the value of ID.
-func (s *System) SetID(val int) {
+func (s *Stockpile) SetID(val int) {
 	s.ID = val
 }
 
-// SetGameID sets the value of GameID.
-func (s *System) SetGameID(val int) {
-	s.GameID = val
-}
-
-// SetName sets the value of Name.
-func (s *System) SetName(val string) {
-	s.Name = val
+// SetQuantity sets the value of Quantity.
+func (s *Stockpile) SetQuantity(val float64) {
+	s.Quantity = val
 }
 
 // Ref: #/components/schemas/userCreate
