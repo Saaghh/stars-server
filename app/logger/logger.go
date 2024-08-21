@@ -20,7 +20,8 @@ func InitLogger(cfg Config) {
 
 	config := zap.NewProductionEncoderConfig()
 
-	config.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.EncodeTime = zapcore.TimeEncoderOfLayout("2006/01/02 15:04:05")
+	config.EncodeLevel = zapcore.LowercaseColorLevelEncoder
 
 	zap.ReplaceGlobals(zap.New(zapcore.NewCore(zapcore.NewConsoleEncoder(config), os.Stdout, level)))
 

@@ -1,6 +1,8 @@
 package processor
 
-import "context"
+import (
+	"context"
+)
 
 type store interface {
 	WithTx(ctx context.Context, f func(context.Context) error) error

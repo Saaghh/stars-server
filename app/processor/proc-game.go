@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-
 	"stars-server/app/models"
 )
 
@@ -19,6 +18,8 @@ type game interface {
 
 	TxUpdateStellarBodiesMovement(ctx context.Context, duration time.Duration, gameID int) error
 	TxUpdateWorldTime(ctx context.Context, duration time.Duration, gameID int) error
+
+	DeleteGame(ctx context.Context, id int) error
 }
 
 func (p *Processor) GetStellarBodies(ctx context.Context, filter models.StellarBodyFilter) (map[uuid.UUID]*models.StellarBody, error) {
@@ -141,6 +142,14 @@ func (p *Processor) GameTick(ctx context.Context, duration time.Duration) error 
 		return nil
 	}); err != nil {
 		return fmt.Errorf("p.db.WithTx: %w", err)
+	}
+
+	return nil
+}
+
+func (p *Processor) DeleteWholeGame(ctx context.Context, id int) error {
+	if err := p.db.DeleteGame(ctx, id); err != nil {
+		return fmt.Errorf("p.db.DeleteGame(%d): %w", id, err)
 	}
 
 	return nil

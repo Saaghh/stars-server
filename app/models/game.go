@@ -30,6 +30,7 @@ type System struct {
 	ID     int
 	GameID int
 	Name   string
+	Bodies []StellarBody
 }
 
 type StellarBodyType struct {
@@ -71,4 +72,11 @@ type Stockpile struct {
 	ID           int
 	Quantity     float64
 	ResourceType ResourceType
+}
+
+type CreateStar struct {
+	SystemID int
+	Name     string
+	Mass     float64
+	Diameter float64
 }

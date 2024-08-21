@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
-	migrate "github.com/rubenv/sql-migrate"
+	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"stars-server/app/config"
 	"stars-server/app/logger"
@@ -17,8 +17,33 @@ import (
 	"stars-server/app/storage/postgres"
 )
 
-func main() {
+// serveCmd represents the serve command
+var serveCmd = &cobra.Command{
+	Use:   "serve",
+	Short: "Runs api server",
+	Long:  `Runs api server for stars game`,
+	Run: func(cmd *cobra.Command, args []string) {
+		runServer()
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(serveCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// serveCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func runServer() {
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// config
 	cfgFile := os.Getenv("STARS_CONF")
@@ -46,10 +71,6 @@ func main() {
 		zap.L().With(zap.Error(err)).Fatal("main/postgres.New")
 	}
 
-	if err = pg.Migrate(migrate.Up); err != nil {
-		zap.L().With(zap.Error(err)).Fatal("main/migrate.Migrate")
-	}
-
 	// logic layer
 	proc := processor.New(pg)
 
@@ -67,5 +88,4 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
 
-	cancel()
 }

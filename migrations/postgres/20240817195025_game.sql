@@ -1,4 +1,5 @@
--- +migrate Up
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE games(
     id serial primary key,
     owner_id int references users(id) not null,
@@ -10,7 +11,7 @@ CREATE TABLE games(
 
 CREATE TABLE systems(
     id serial primary key,
-    game_id int references games(id) not null,
+    game_id int references games(id) on delete cascade not null,
     name varchar not null
 );
 
@@ -21,7 +22,7 @@ CREATE TABLE stellar_bodies_types(
 
 CREATE TABLE stellar_bodies(
     id uuid primary key,
-    system_id int references systems(id) not null,
+    system_id int references systems(id) on delete cascade not null,
 
     -- body properties
     name varchar not null,
@@ -40,6 +41,9 @@ CREATE TABLE stellar_bodies(
     coordinate_x numeric, -- in au
     coordinate_y numeric -- in au
 );
+-- +goose StatementEnd
 
--- +migrate Down
+-- +goose Down
+-- +goose StatementBegin
 DROP TABLE stellar_bodies, stellar_bodies_types, systems, games;
+-- +goose StatementEnd

@@ -19,4 +19,8 @@ fmt:
 lint: tidy fmt
 	golangci-lint run
 
+.PHONY: create-pg-migration
+create-pg-migration:
+	goose -dir migrations/postgres create $(name) sql
+
 .DEFAULT_GOAL := lint

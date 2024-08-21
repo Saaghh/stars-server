@@ -1,0 +1,26 @@
+{
+  "planets": [
+    "Aldoria", "Branx", "Celestia", "Druin", "Elios", "Feron", "Galvora", "Hespera", "Ithica", "Joran",
+    "Kronos", "Lunaris", "Mordana", "Nyxar", "Orionis", "Praxos", "Quintara", "Rathen", "Sarpedon", "Targus",
+    "Ultrix", "Vandor", "Wexlar", "Xenon", "Ythos", "Zephyra", "Arcturus", "Borealis", "Caelum", "Damaris",
+    "Eryndor", "Fendris", "Galaris", "Helios", "Illyria", "Jareth", "Korath", "Lyra", "Morvus", "Nexor",
+    "Oberon", "Pyros", "Quorra", "Riven", "Solara", "Thalax", "Ulgor", "Vespera", "Wraithor", "Xanthus",
+    "Ymir", "Zarath", "Azura", "Bastion", "Cylix", "Darian", "Elara", "Feronis", "Gorgor", "Hydraxis", "Inara",
+    "Juno", "Kassia", "Lareth", "Malos", "Nivara", "Orphos", "Peregrine", "Qorath", "Rygar", "Seren", "Tiberon",
+    "Urza", "Vortiga", "Wyrm", "Xalios", "Yggdrasil", "Zyron", "Aether", "Brimstone", "Chimera", "Drakonis",
+    "Eldoria", "Frostus", "Gryphos", "Hyperion", "Icarus", "Jorvik", "Kestrel", "Lycana", "Mithra", "Nexus",
+    "Oryx", "Prometheus", "Quillon", "Ragnar", "Sylvara", "Taurus", "Umbra"
+  ],
+  "stars": [
+    "Arcturus", "Betelgeuse", "Canopus", "Deneb", "Eridani", "Fomalhaut", "Gacrux", "Hadar", "Izar", "Jabbah",
+    "Kaus", "Lacerta", "Mintaka", "Nunki", "Ophiuchus", "Polaris", "Rigel", "Sargas", "Tucana", "Ursae",
+    "Vega", "Wesen", "Xamidimura", "Yildun", "Zubenel", "Antares", "Bellatrix", "Capella", "Dubhe", "Elnath",
+    "Fornax", "Gienah", "Hamal", "Indus", "Jabbah", "Keid", "Lupus", "Markab", "Naos", "Octantis", "Pavo",
+    "Regulus", "Shaula", "Thuban", "Unukalhai", "Vindemiatrix", "Wezen", "Xiphias", "Yed", "Zosma",
+    "Achernar", "Botein", "Cebalrai", "Diphda", "Electra", "Furud", "Gatria", "Herschel", "Izar", "Jabbah",
+    "Kappa", "Lesath", "Mira", "Nashira", "Omicron", "Peacock", "Rastaban", "Sabik", "Tarf", "Unuk",
+    "Vulpecula", "Wasat", "Xerneas", "Yucatan", "Zibal", "Algol", "Becrux", "Chara", "Dschubba", "Etamin",
+    "Fawaris", "Gatria", "Hyadum", "Izar", "Jabbah", "Kaus", "Lyra", "Meissa", "Nihal", "Osiris", "Phact",
+    "Rigil", "Sadalmelik", "Tureis", "Vulpecula", "Wasat", "Xamidimura", "Yildun", "Zaurak"
+  ]
+}

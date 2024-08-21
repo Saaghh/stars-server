@@ -7,7 +7,6 @@ import (
 
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-
 	"stars-server/app/generated/api-server"
 	"stars-server/app/models"
 )
